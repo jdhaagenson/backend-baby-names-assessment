@@ -36,28 +36,28 @@ import sys
 import re
 import argparse
 
-def extract_names(filename):
+
+def extract_names(filename='baby1990.html'):
     names = []
     with open(filename) as f:
         text = f.read()
-    baby_year = re.search(r'Popularity\sin\s(d\d\d\d)', text)
+    baby_year = re.search(r'Popularity\sin\s(\d\d\d\d)', text)
     if not baby_year:
         sys.stderr.write('No year could be found!\n')
         sys.exit(1)
     year = baby_year.group(1)
     names.append(year)
-    tuples = re.findall(r'<td>(\d+)</td><td>(\w+)</td>\<td>(\w+)</td>', text)
+    tuples = re.findall(r"<td>(\d+)</td><td>(\w+)</td><td>(\w+)", text)
     names_rank = {}
-    for ranked in tuples:
-        (rank, boyname, girlname) = ranked
-    if boyname not in names_rank:
-        names_rank[boyname] = rank
-    if girlname not in names_rank:
-        names_rank[girlname] = rank
-    sort_names = sorted(names_rank.keys())
-    for name in sort_names:
-        names.append(name + " " + names_rank[name])
+    for tuple in tuples:
+        names_rank[tuple[1]] = tuple[0]
+        if tuple[2] not in names_rank.keys():
+            names_rank[tuple[2]] = tuple[0]
+    for k,v in names_rank.items():
+        names.append([k,v])
+
     return names
+extract_names('baby1990.html')
 
 def create_parser():
     """Create a cmd line parser object with 2 argument definitions"""
@@ -85,11 +85,11 @@ def main(args):
     with open(filename) as f:
         text = f.read()
 
-    create_summary = ns.summaryfile
-    if create_summary:
-        with open(filename + ".summary", "w") as output:
-            output.write(text + '\n')
-    else:
-        print(text)
-    if __name__ == '__main__':
-        main(sys.argv[1:])
+        create_summary = ns.summaryfile
+        if create_summary:
+            with open(filename + ".summary", "w") as output:
+                output.write(text + '\n')
+        else:
+            print(text)
+if __name__ == '__main__':
+    main(sys.argv[1:])
