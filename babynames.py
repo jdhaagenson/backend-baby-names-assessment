@@ -92,7 +92,8 @@ def main(args):
     create_summary = ns.summaryfile
     if create_summary:
         with open(filename + ".summary", "w") as output:
-            output.write(names + '\n')
+            for name in names:
+                output.write(name + '\n')
     else:
         pp(names)
 
