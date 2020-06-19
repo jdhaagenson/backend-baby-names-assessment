@@ -9,12 +9,12 @@ import sys
 import os
 import glob
 import unittest
-try:
-    # python2
-    from StringIO import StringIO
-except ImportError:
-    # python3
-    from io import StringIO
+# try:
+#     # python2
+#     from StringIO import StringIO
+# except ImportError:
+#     # python3
+from io import StringIO
 
 # uncomment one of the lines below
 # import soln.babynames as babynames
