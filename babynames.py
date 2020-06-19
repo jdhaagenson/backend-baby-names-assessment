@@ -40,7 +40,7 @@ import pprint
 pp = pprint.pprint
 
 
-def extract_names(filename='baby*.html'):
+def extract_names(filename):
     names = []
     with open(filename) as f:
         text = f.read()
