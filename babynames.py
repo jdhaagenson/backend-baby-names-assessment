@@ -35,9 +35,12 @@ Suggested milestones for incremental development:
 import sys
 import re
 import argparse
+import pprint 
+
+pp = pprint.pprint
 
 
-def extract_names(filename='baby1990.html'):
+def extract_names(filename='baby*.html'):
     names = []
     with open(filename) as f:
         text = f.read()
@@ -46,18 +49,21 @@ def extract_names(filename='baby1990.html'):
         sys.stderr.write('No year could be found!\n')
         sys.exit(1)
     year = baby_year.group(1)
-    names.append(year)
+    # names.append(year)
     tuples = re.findall(r"<td>(\d+)</td><td>(\w+)</td><td>(\w+)", text)
-    names_rank = {}
+    boys = {}
+    girls = {}
     for tuple in tuples:
-        names_rank[tuple[1]] = tuple[0]
-        if tuple[2] not in names_rank.keys():
-            names_rank[tuple[2]] = tuple[0]
-    for k,v in names_rank.items():
-        names.append([k,v])
-
+        boys[tuple[1]] = tuple[0]
+        girls[tuple[2]] = tuple[0]
+    for boy in boys.items():
+        names.append(boy[0] + " " + boy[1])
+    for girl in girls.items():
+        if girl not in names:
+            names.append(girl[0] + " " + girl[1])
+    names = sorted(names)
     return names
-extract_names('baby1990.html')
+# extract_names('baby1990.html')
 
 def create_parser():
     """Create a cmd line parser object with 2 argument definitions"""
@@ -77,19 +83,19 @@ def main(args):
         parser.print_usage()
         sys.exit(1)
 
-        file_list = ns.files
+    file_list = ns.files
 
     for filename in file_list:
         print("Running File""{}".format(filename))
         names = extract_names(filename)
-    with open(filename) as f:
-        text = f.read()
+    
+    create_summary = ns.summaryfile
+    if create_summary:
+        with open(filename + ".summary", "w") as output:
+            output.write(names + '\n')
+    else:
+        pp(names)
 
-        create_summary = ns.summaryfile
-        if create_summary:
-            with open(filename + ".summary", "w") as output:
-                output.write(text + '\n')
-        else:
-            print(text)
+
 if __name__ == '__main__':
     main(sys.argv[1:])
