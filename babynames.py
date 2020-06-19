@@ -52,15 +52,14 @@ def extract_names(filename='baby*.html'):
     # names.append(year)
     tuples = re.findall(r"<td>(\d+)</td><td>(\w+)</td><td>(\w+)", text)
     boys = {}
+    names_rank = {}
     girls = {}
     for tuple in tuples:
-        boys[tuple[1]] = tuple[0]
-        girls[tuple[2]] = tuple[0]
-    for boy in boys.items():
-        names.append(boy[0] + " " + boy[1])
-    for girl in girls.items():
-        if girl not in names:
-            names.append(girl[0] + " " + girl[1])
+        names_rank[tuple[1]] = tuple[0]
+        if tuple[2] not in names_rank:
+            names_rank[tuple[2]] = tuple[0]
+    for name in names_rank.items():
+        names.append(name[0] + " " + name[1])
     names = sorted(names)
     return names
 # extract_names('baby1990.html')
@@ -86,16 +85,16 @@ def main(args):
     file_list = ns.files
 
     for filename in file_list:
-        print("Running File""{}".format(filename))
+        print("Running File: ""{}".format(filename))
         names = extract_names(filename)
     
-    create_summary = ns.summaryfile
-    if create_summary:
-        with open(filename + ".summary", "w") as output:
-            for name in names:
-                output.write(name + '\n')
-    else:
-        pp(names)
+        create_summary = ns.summaryfile
+        if create_summary:
+            with open(filename + ".summary", "w") as output:
+                for name in names:
+                    output.write(name + '\n')
+        else:
+            pp(names)
 
 
 if __name__ == '__main__':
